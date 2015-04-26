@@ -3,61 +3,51 @@
 <head>
    <meta charset="UTF-8">
    <title>AssignmentTwo</title>
-   <link rel="stylesheet" type="text/css" href="css/myfirstcss.css">
    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="css/myfirstcss.css">
 </head>
 <body>
 
    <nav class="navbar navbar-inverse" role="navigation">
       <div class="container">
          <div class="navbar-header">
-            <a class="navbar-brand" href="bootstrap00.html">Twitter Analytics</a>
+            <a class="navbar-brand" href="bootstrap00.html"><span>Phoenix</span></a>
          </div>
          <div>
             <ul class="nav navbar-nav">
                <li><a href="bootstrap01.html"><span class="glyphicon glyphicon-headphones"> Festivals</span></a></li>
-               <li><a href="bootstrap02.html"><span class="glyphicon glyphicon-globe"> Weeks</span></a></li>
+               <li><a href="bootstrap02.html"><span class="glyphicon glyphicon-leaf"> Pets</span></a></li>
                <li><a href="#"><span class="glyphicon glyphicon-bullhorn"> Sports</span></a></li>
                <li><a href="#"><span class="glyphicon glyphicon-cutlery"> Restaurants</span></a></li>
-               <li><a href="#"><span class="glyphicon glyphicon-leaf"> Pets</span></a></li>
+               <li><a href="#"><span class="glyphicon glyphicon-globe"> Weeks</span></a></li>
             </ul>
          </div>
       </div>
    </nav>
 
-   <div class="container-fluid">
-      <div class="row-fluid">
-         <div class="span1">
+   <div class="container">
+      <ul id="myTab" class="nav nav-pills nav-stacked">
+         <li class="active"><a href="#home" data-toggle="tab">Figure 1</a>
+         </li>
+         <li><a href="#ios" data-toggle="tab">Figure 2</a></li>
+         <li><a href="#jmeter" data-toggle="tab">Figure 3</a></li>
+         <li><a href="#ejb" data-toggle="tab">Figure 4</a></li>
+      </ul>
+      <div id="myTabContent" class="tab-content">
+         <div class="tab-pane fade in active" id="home">
+            <p>Figure 1: Content.</p>
          </div>
-         <div class="span11">
-            <h1>
-               Phoenix
-            </h1>
+         <div class="tab-pane fade" id="ios">
+            <p>Figure 2: Content.</p>
          </div>
-      </div>
-   </div>
-
-   <ul id="myTab" class="nav nav-pills nav-stacked">
-      <li class="active"><a href="#home" data-toggle="tab">Figure 1</a>
-      </li>
-      <li><a href="#ios" data-toggle="tab">Figure 2</a></li>
-      <li><a href="#jmeter" data-toggle="tab">Figure 3</a></li>
-      <li><a href="#ejb" data-toggle="tab">Figure 4</a></li>
-   </ul>
-   <div id="myTabContent" class="tab-content">
-      <div class="tab-pane fade in active" id="home">
-         <p>Figure 1: Content.</p>
-      </div>
-      <div class="tab-pane fade" id="ios">
-         <p>Figure 2: Content.</p>
-      </div>
-      <div class="tab-pane fade" id="jmeter">
-         <p>Figure 3: Content.</p>
-      </div>
-      <div class="tab-pane fade" id="ejb">
-         <p>Figure 4: Content.</p>
+         <div class="tab-pane fade" id="jmeter">
+            <p>Figure 3: Content.</p>
+         </div>
+         <div class="tab-pane fade" id="ejb">
+            <p>Figure 4: Content.</p>
+         </div>
       </div>
    </div>
 

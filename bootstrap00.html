@@ -6,23 +6,67 @@
    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-   <link rel="stylesheet" type="text/css" href="css/myfirstcss.css">
+
+   <style type="text/css">
+      body {
+         background-color: black;
+         color: white;
+      }
+
+      .navbar {
+         background-color: rgba(0,0,0,0.6);
+         background: rgba(0,0,0,0.6);
+      }
+
+      .navbar-header span {
+         padding-left: 140px;
+         padding-right: 60px;
+         color: white;
+         font-family: myriad;
+      }
+
+      .nav span {
+         color: white;
+      }
+
+      .nav .image {
+         padding-right: 25px;
+         color: white;
+      }
+
+      .nav span:hover {
+         color: gray;
+      }
+
+      .nav li {
+         padding-right: 40px;
+      }
+
+      .nav a {
+         color: white;
+         font-family: myriad;
+         font-size: 15px;
+      }
+   </style>
+
 </head>
 <body>
 
    
    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="navbar-header">
-         <a class="navbar-brand" href="bootstrap00.html"><span>Phoenix</span></a>
-      </div>
-      <div>
-         <ul class="nav navbar-nav">
-            <li><a href="bootstrap01.html"><span class="glyphicon glyphicon-headphones"> Festivals</span></a></li>
-            <li><a href="bootstrap02.html"><span class="glyphicon glyphicon-globe"> Weeks</span></a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-bullhorn"> Sports</span></a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-cutlery"> Restaurants</span></a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-leaf"> Pets</span></a></li>
-         </ul>
+      <div class="container">
+         <div class="navbar-header">
+            <a class="navbar-brand" href="bootstrap00.html"><span>Phoenix</span></a>
+         </div>
+         <div>
+            <ul class="nav navbar-nav">
+               <li><a href="bootstrap01.html"><span class="image glyphicon glyphicon-headphones"></span><span>Festivals</span></a></li>
+               <li><a href="bootstrap02.html"><span class="image glyphicon glyphicon-leaf"></span><span>Pets</span></a></li>
+               <li><a href="#"><span class="image glyphicon glyphicon-bullhorn"></span><span>Sports</span></a></li>
+               <li><a href="#"><span class="image glyphicon glyphicon-cutlery"></span><span>Restaurants</span></a></li>
+               <li><a href="#"><span class="image glyphicon glyphicon-globe"></span><span>Weeks</span></a></li>
+            </ul>
+         </div>
       </div>
    </nav>
 
@@ -34,39 +78,40 @@
          </li>
          <li data-slide-to="2" data-target="#carousel-941826">
          </li>
+         <li data-slide-to="3" data-target="#carousel-941826">
+         </li>
+         <li data-slide-to="4" data-target="#carousel-941826">
+         </li>
       </ol>
       <div class="carousel-inner">
          <div class="item active">
-            <img alt="" src="IMG_2419.jpg" />
+            <img alt="" src="images/city.jpg" />
             <div class="carousel-caption">
-               <h4>
-                  棒球
-               </h4>
-               <p>
-                  棒球运动是一种以棒打球为主要特点，集体性、对抗性很强的球类运动项目，在美国、日本尤为盛行。
-               </p>
+               
             </div>
          </div>
          <div class="item">
-            <img alt="" src="IMG_2419.jpg" />
+            <img alt="" src="images/cat.jpg" />
             <div class="carousel-caption">
-               <h4>
-                  冲浪
-               </h4>
-               <p>
-                  冲浪是以海浪为动力，利用自身的高超技巧和平衡能力，搏击海浪的一项运动。运动员站立在冲浪板上，或利用腹板、跪板、充气的橡皮垫、划艇、皮艇等驾驭海浪的一项水上运动。
-               </p>
+               
             </div>
          </div>
          <div class="item">
-            <img alt="" src="IMG_2419.jpg" />
+            <img alt="" src="images/sport.jpg" />
             <div class="carousel-caption">
-               <h4>
-                  自行车
-               </h4>
-               <p>
-                  以自行车为工具比赛骑行速度的体育运动。1896年第一届奥林匹克运动会上被列为正式比赛项目。环法赛为最著名的世界自行车锦标赛。
-               </p>
+               
+            </div>
+         </div>
+         <div class="item">
+            <img alt="" src="images/building.jpg" />
+            <div class="carousel-caption">
+               
+            </div>
+         </div>
+         <div class="item">
+            <img alt="" src="images/river.jpg" />
+            <div class="carousel-caption">
+               
             </div>
          </div>
       </div> 
@@ -75,11 +120,9 @@
    </div>
 
    <script>
-      $(function(){
          $("#carousel-941826").carousel({
-            interval: 3500
+            interval: 2500
          });
-      });
    </script>
 
 </body>
