@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>AssignmentTwo</title>
+   <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+   <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+   <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+   <script src="http://code.highcharts.com/highcharts.js"></script>
+
+   <style type="text/css">
+      body {
+         background-image: url("images/catblur.jpg");
+         background-attachment: fixed;
+         background-repeat: no-repeat;
+         background-size: 100%;
+      }
+
+      .navbar {
+         background-color: rgba(0,0,0,0.6);
+         background: rgba(0,0,0,0.6);
+      }
+
+      .navbar-header span {
+         padding-left: 140px;
+         padding-right: 60px;
+         color: white;
+         font-family: myriad;
+      }
+
+      .nav .image {
+         padding-right: 25px;
+         color: white;
+      }
+
+      .nav .navcontent {
+         color: white;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      .nav .navcontent:hover {
+         color: gray;
+      }
+
+      .nav li {
+         padding-right: 40px;
+      }
+
+      .main {
+         width: 830px;
+         margin-left: 100px;
+      }
+
+      .lefttab {
+         width: auto;
+         height: auto;
+         margin-top: 150px;
+         margin-right: 80px;
+         float: left;
+         border-radius: 10px;
+         background-color: rgba(0,0,0,0.4);
+      }
+
+      #myTab {
+         width: 250px;
+         border-radius: 10px;
+      }
+
+      #myTab li {
+         padding: 0;
+      }
+
+      #myTab a {
+         text-align: center;
+         border-radius: 10px;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      #myTab a:hover {
+         background-color: rgba(0,0,0,0.2);
+      }
+
+      #myTabContent {
+         width: 500px;
+         margin-top: 80px;
+         float: right;
+      }
+
+   </style>
+
+</head>
+<body>
+
+   <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container">
+         <div class="navbar-header">
+            <a class="navbar-brand" href="bootstrap00.html"><span>Phoenix</span></a>
+         </div>
+         <div>
+            <ul class="nav navbar-nav">
+               <li><a href="bootstrap03.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festivals</span></a></li>
+               <li><a href="bootstrap02.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Pets</span></a></li>
+               <li><a href="bootstrap04.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sports</span></a></li>
+               <li><a href="bootstrap05.html"><span class="image glyphicon glyphicon-cutlery"></span><span class="navcontent">Restaurants</span></a></li>
+               <li><a href="bootstrap06.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Weeks</span></a></li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div class="main">
+      <div class="lefttab">
+         <ul id="myTab" class="nav nav-pills nav-stacked">
+            <li><a href="#home" data-toggle="tab"><span class="figure">Figure 1</span></a></li>
+            <li><a href="#ios" data-toggle="tab"><span class="figure">Figure 2</span></a></li>
+            <li><a href="#jmeter" data-toggle="tab"><span class="figure">Figure 3</span></a></li>
+            <li><a href="#ejb" data-toggle="tab"><span class="figure">Figure 4</span></a></li>
+         </ul>
+      </div>
+      <div id="myTabContent" class="tab-content">
+         <div class="tab-pane fade in active" id="home">
+            <div id="container0" style="background-color: rgba(0,0,0,0.2); min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="ios">
+            <div id="container1" style="min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="jmeter">
+            <div id="container2" style="min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="ejb">
+            <div id="container3" style="min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      $(function () {
+
+         var count = 0;
+         var dogcount = 0;
+         var catcount = 0;
+         var birdcount = 0;
+         var fishcount = 0;
+         var turtlecount = 0;
+
+         var dog = [];
+         var cat = [];
+         var bird = [];
+         var fish = [];
+         var turtle = [];
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/dog',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               dogcount = parseInt(data.rows[0].value);
+               count = count + dogcount;
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/cat',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               catcount = parseInt(data.rows[0].value);
+               count = count + catcount;
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/bird',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               birdcount = parseInt(data.rows[0].value);
+               count = count + birdcount;
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/fish',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               fishcount = parseInt(data.rows[0].value);
+               count = count + fishcount;
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/turtle',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               turtlecount = parseInt(data.rows[0].value);
+               count = count + turtlecount;
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/dog?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  dog[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/cat?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  cat[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/bird?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  bird[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/fish?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  fish[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/turtle?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  turtle[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $("li").click(function(){
+
+            $('#container1').highcharts({
+               chart: {
+                  type: 'column'
+               },
+               title: {
+                  text: 'Sentiment Column Chart on Pets'
+               },
+               xAxis: {
+                  categories: ['Dog', 'Cat', 'Bird', 'Fish', 'Turtle']
+               },
+               credits: {
+                  enabled: false
+               },
+               series: [{
+                  name: "-2",
+                  data: [-dog[0], -cat[0], -bird[0], -fish[0], -turtle[0]]
+               }, {
+                  name: "-1",
+                  data: [-dog[1], -cat[1], -bird[1], -fish[1], -turtle[1]]
+               }, {
+                  name: '0',
+                  data: [dog[2], cat[2], bird[2], fish[2], turtle[2]]
+               }, {
+                  name: '+1',
+                  data: [dog[3], cat[3], bird[3], fish[3], turtle[3]]
+               }, {
+                  name: '+2',
+                  data: [dog[4], cat[4], bird[4], fish[4], turtle[4]]
+               }]
+            });
+
+            $('#container0').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Browser market shares at a specific website, 2014'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: [
+                      ['Dog', dogcount/count],
+                      ['Cat', catcount/count],
+                      {
+                          name: 'Bird',
+                          y: birdcount/count,
+                          sliced: true,
+                          selected: true
+                      },
+                      ['Fish', fishcount/count],
+                      ['Turtle', turtlecount/count]
+                  ]
+               }]
+             });
+
+         });
+         
+      });
+   </script>
+
+</body>
+</html>			
