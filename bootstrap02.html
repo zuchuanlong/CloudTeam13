@@ -20,6 +20,7 @@
       .navbar {
          background-color: rgba(0,0,0,0.6);
          background: rgba(0,0,0,0.6);
+         border: 0;
       }
 
       .navbar-header span {
@@ -49,7 +50,7 @@
       }
 
       .main {
-         width: 830px;
+         width: 850px;
          margin-left: 100px;
       }
 
@@ -57,7 +58,7 @@
          width: auto;
          height: auto;
          margin-top: 150px;
-         margin-right: 80px;
+         margin-right: 100px;
          float: left;
          border-radius: 10px;
          background-color: rgba(0,0,0,0.4);
@@ -85,7 +86,7 @@
 
       #myTabContent {
          width: 500px;
-         margin-top: 80px;
+         margin-top: 60px;
          float: right;
       }
 
@@ -120,10 +121,10 @@
    <div class="main">
       <div class="lefttab">
          <ul id="myTab" class="nav nav-pills nav-stacked">
-            <li class="active"><a href="#home" data-toggle="tab"><span class="figure">Figure 1</span></a></li>
-            <li><a href="#ios" data-toggle="tab"><span class="figure">Figure 2</span></a></li>
-            <li><a href="#jmeter" data-toggle="tab"><span class="figure">Figure 3</span></a></li>
-            <li><a href="#ejb" data-toggle="tab"><span class="figure">Figure 4</span></a></li>
+            <li class="active"><a href="#home" data-toggle="tab"><span class="figure">Heat Map</span></a></li>
+            <li><a href="#ios" data-toggle="tab"><span class="figure">Pie Chart</span></a></li>
+            <li><a href="#jmeter" data-toggle="tab"><span class="figure">Column Chart</span></a></li>
+            <li><a href="#ejb" data-toggle="tab"><span class="figure">Line Chart</span></a></li>
          </ul>
       </div>
       <div id="myTabContent" class="tab-content">
@@ -378,12 +379,12 @@
 
          $("li").click(function(){
 
-            $('#container0').highcharts({
+            $('#container1').highcharts({
                chart: {
                   type: 'column'
                },
                title: {
-                  text: 'Sentiment Column Chart on Pets'
+                  text: 'Sentiment Scores on Animals Column Chart'
                },
                xAxis: {
                   categories: ['Dog', 'Cat', 'Bird', 'Fish', 'Bull']
@@ -409,14 +410,14 @@
                }]
             });
 
-            $('#container1').highcharts({
+            $('#container0').highcharts({
                chart: {
                   plotBackgroundColor: null,
                   plotBorderWidth: null,
                   plotShadow: false
                },
                title: {
-                  text: 'Browser market shares at a specific website, 2014'
+                  text: 'Tweets Counts on Animals Pie Chart'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -455,7 +456,7 @@
 
             $('#container2').highcharts({
                title: {
-                  text: 'Monthly Average Temperature',
+                  text: 'Sentiment Scores Distributions on Animals Line Chart',
                   x: -20 //center
                },
                xAxis: {
@@ -471,9 +472,6 @@
                       width: 1,
                       color: '#808080'
                   }]
-               },
-               tooltip: {
-                  valueSuffix: '°C'
                },
                legend: {
                   layout: 'vertical',
