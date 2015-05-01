@@ -143,13 +143,19 @@
          var catcount = 0;
          var birdcount = 0;
          var fishcount = 0;
-         var turtlecount = 0;
+         var bullcount = 0;
 
          var dog = [];
          var cat = [];
          var bird = [];
          var fish = [];
-         var turtle = [];
+         var bull = [];
+
+         var dognew = [];
+         var catnew = [];
+         var birdnew = [];
+         var fishnew = [];
+         var bullnew = [];
 
          $.ajax({
             url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/dog',
@@ -192,12 +198,12 @@
          });
 
          $.ajax({
-            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/turtle',
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/bull',
             type: 'get',
             dataType: 'jsonp',
             success: function(data) {
-               turtlecount = parseInt(data.rows[0].value);
-               count = count + turtlecount;
+               bullcount = parseInt(data.rows[0].value);
+               count = count + bullcount;
             }
          });
 
@@ -250,13 +256,73 @@
          });
 
          $.ajax({
-            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/turtle?group_level=1',
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/bull?group_level=1',
             type: 'get',
             dataType: 'jsonp',
             success: function(data) {
                for(var n = 0 ; n < data.rows.length ; n++){
                   
-                  turtle[n] = parseInt(data.rows[n].value);
+                  bull[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/dognew?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  dognew[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/catnew?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  catnew[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/birdnew?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  birdnew[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/fishnew?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  fishnew[n] = parseInt(data.rows[n].value);
+               }
+            }
+         });
+
+         $.ajax({
+            url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/bullnew?group_level=1',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  bullnew[n] = parseInt(data.rows[n].value);
                }
             }
          });
@@ -271,26 +337,26 @@
                   text: 'Sentiment Column Chart on Pets'
                },
                xAxis: {
-                  categories: ['Dog', 'Cat', 'Bird', 'Fish', 'Turtle']
+                  categories: ['Dog', 'Cat', 'Bird', 'Fish', 'Bull']
                },
                credits: {
                   enabled: false
                },
                series: [{
                   name: "-2",
-                  data: [-dog[0], -cat[0], -bird[0], -fish[0], -turtle[0]]
+                  data: [-dog[0], -cat[0], -bird[0], -fish[0], -bull[0]]
                }, {
                   name: "-1",
-                  data: [-dog[1], -cat[1], -bird[1], -fish[1], -turtle[1]]
+                  data: [-dog[1], -cat[1], -bird[1], -fish[1], -bull[1]]
                }, {
                   name: '0',
-                  data: [dog[2], cat[2], bird[2], fish[2], turtle[2]]
+                  data: [dog[2], cat[2], bird[2], fish[2], bull[2]]
                }, {
                   name: '+1',
-                  data: [dog[3], cat[3], bird[3], fish[3], turtle[3]]
+                  data: [dog[3], cat[3], bird[3], fish[3], bull[3]]
                }, {
                   name: '+2',
-                  data: [dog[4], cat[4], bird[4], fish[4], turtle[4]]
+                  data: [dog[4], cat[4], bird[4], fish[4], bull[4]]
                }]
             });
 
@@ -332,10 +398,60 @@
                           selected: true
                       },
                       ['Fish', fishcount/count],
-                      ['Turtle', turtlecount/count]
+                      ['Bull', bullcount/count]
                   ]
                }]
-             });
+            });
+
+
+            $('#container2').highcharts({
+               title: {
+                  text: 'Monthly Average Temperature',
+                  x: -20 //center
+               },
+               xAxis: {
+                  categories: ['-5', '-4', '-3', '-2', '-1', '0',
+                      '1', '2', '3', '4', '5']
+               },
+               yAxis: {
+                  title: {
+                      text: 'Count'
+                  },
+                  plotLines: [{
+                      value: 0,
+                      width: 1,
+                      color: '#808080'
+                  }]
+               },
+               tooltip: {
+                  valueSuffix: '°C'
+               },
+               legend: {
+                  layout: 'vertical',
+                  align: 'right',
+                  verticalAlign: 'middle',
+                  borderWidth: 0
+               },
+               series: [{
+                  name: 'Dog',
+                  data: dognew
+               }, {
+                  name: 'Cat',
+                  data: catnew
+               }, {
+                  name: 'Bird',
+                  data: birdnew
+               }, {
+                  name: 'Fish',
+                  data: fishnew
+               }, {
+                  name: 'Bull',
+                  data: bullnew
+               }]
+            });
+
+
+
 
          });
          
