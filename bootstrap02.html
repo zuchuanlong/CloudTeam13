@@ -152,9 +152,6 @@
          var dogvalue = [];
          var taxiData = [];
 
-         var petnewsemtimentt = [];
-         var petnewsemtiment = [];
-
          $.ajax({
             url: 'http://115.146.93.101:5984/phoenix_tweets/_design/Pets/_view/doggeo',
             type: 'get',
@@ -224,6 +221,9 @@
                }
             });
          }
+
+         var petnewsemtimentt = [];
+         var petnewsemtiment = [];
 
          function linechart (pet, number){
             $.ajax({
