@@ -105,7 +105,7 @@
                <li><a href="general.html"><span class="image glyphicon glyphicon glyphicon-th-large"></span><span class="navcontent">General</span></a></li>
                <li><a href="sport.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sport</span></a></li>
                <li><a href="animal.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Animal</span></a></li>
-               <li><a href="bootstrap03.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festival</span></a></li>
+               <li><a href="festival.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festival</span></a></li>
                <li><a href="bootstrap05.html"><span class="image glyphicon glyphicon-eye-open"></span><span class="navcontent">Emoji</span></a></li>
                <li><a href="tourist.html"><span class="image glyphicon glyphicon-picture"></span><span class="navcontent">Tourist</span></a></li>
             </ul>
@@ -116,25 +116,22 @@
    <div class="main">
       <div class="lefttab">
          <ul id="myTab" class="nav nav-pills nav-stacked">
-            <li id="heatmap" class="active"><a href="#home" data-toggle="tab"><span class="figure">Tweets Distribution</span></a></li>
-            <li id="piechart0"><a href="#ios" data-toggle="tab"><span class="figure">Animals Counts</span></a></li>
-            <li id="piechart1"><a href="#jmeter" data-toggle="tab"><span class="figure">Sentiment Counts</span></a></li>
+            <li id="piechart0"><a href="#ios" data-toggle="tab"><span class="figure">Festivals Counts</span></a></li>
+            <li id="piechart1"><a href="#jmeter" data-toggle="tab"><span class="figure">Festivals Distributions</span></a></li>
             <li id="linechart"><a href="#ejb" data-toggle="tab"><span class="figure">Sentiment Distributions</span></a></li>
          </ul>
       </div>
       <div id="myTabContent" class="tab-content">
-         <div class="tab-pane fade in active" id="home">
-            <div id="container" style="width: 900px; height: 500px; float: left"></div>
-         </div>
          <div class="tab-pane fade" id="ios">
             <div id="container0" style="width: 900px; height: 500px; float: left"></div>
          </div>
          <div class="tab-pane fade" id="jmeter">
-            <div id="container00" style="width: 300px; height: 300px; float: left"></div>
-            <div id="container01" style="width: 300px; height: 300px; float: left"></div>
+            <div id="container00" style="width: 450px; height: 500px; float: left"></div>
+            <div id="container01" style="width: 450px; height: 500px; float: left"></div>
          </div>
          <div class="tab-pane fade" id="ejb">
-            <div id="container2" style="width: 900px; height: 500px; float: left"></div>
+            <div id="container11" style="width: 450px; height: 500px; float: left"></div>
+            <div id="container12" style="width: 450px; height: 500px; float: left"></div>
          </div>
       </div>
    </div>
@@ -144,50 +141,8 @@
    <script>
       $(function () {
 
-         /* Google Heat Map */
-         var dogkey = [];
-         var dogvalue = [];
-         var heatmapdata = [];
-
-         $.ajax({
-            url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/doggeo',
-            type: 'get',
-            dataType: 'jsonp',
-            success: function(data) {
-               for(var n = 0 ; n < data.rows.length ; n++){
-                  
-                  dogkey[n] = data.rows[n].key;
-                  dogvalue[n] = data.rows[n].value;
-                  heatmapdata[n] = new google.maps.LatLng(dogkey[n], dogvalue[n]);
-               }
-            }
-         });
-
-         function initialize() {
-            var mapOptions = {
-               zoom: 10,
-               center: new google.maps.LatLng(33.54, -112.073),
-               mapTypeId: google.maps.MapTypeId.HYBRID
-            };
-
-            var map = new google.maps.Map(document.getElementById('container'),
-               mapOptions);
-
-            var pointArray = new google.maps.MVCArray(heatmapdata);
-
-            var heatmap = new google.maps.visualization.HeatmapLayer({
-               data: pointArray,
-               maxIntensity: 60
-            });
-
-            heatmap.setMap(map);
-            heatmap.set('radius', heatmap.get('radius') ? null : 15);
-         }
-
-         google.maps.event.addDomListener(window, 'load', initialize);
-
          /* The list of animals */
-         var list = ['Easter', 'earthDay', 'motherDay', 'newYear', 'valentine', 'artFest', 'sportFest', 'culturalFest'];
+         var list = ['Easter', 'earthDay', 'motherDay', 'newYear', 'valentine', 'musicFest', 'sportFest', 'filmFest'];
 
          /* Pie Chart */
          var petcount = [];
@@ -215,12 +170,10 @@
                dataType: 'jsonp',
                success: function(data) {
                   petsentiment[number] = [];
-                  petsentiment[number + 5] = [];
                   petsentiment[number][0] = 0;
                   petsentiment[number][1] = 0;
                   petsentiment[number][2] = 0;
                   for(var n = 0 ; n < data.rows.length ; n++){
-                     petsentiment[number + 5][n] = parseInt(data.rows[n].value);
                      if(data.rows[n].key < 0){
                         petsentiment[number][0] = parseInt(data.rows[n].value) + petsentiment[number][0];
                      } else if(data.rows[n].key > 0){
@@ -250,7 +203,7 @@
                   plotShadow: false
                },
                title: {
-                  text: 'Animals Counts'
+                  text: 'Festivals Counts'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -270,7 +223,7 @@
                },
                series: [{
                   type: 'pie',
-                  name: 'Browser share',
+                  name: 'share',
                   data: [
                       ['Traditional Festivals', (petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])/count],
                       ['Non-traditional Festivals', (petcount[5] + petcount[6] + petcount[7])/count]
@@ -290,7 +243,7 @@
                   plotShadow: false
                },
                title: {
-                  text: 'Dog'
+                  text: 'Traditional Festivals'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -310,13 +263,13 @@
                },
                series: [{
                   type: 'pie',
-                  name: 'Browser share',
+                  name: 'share',
                   data: [
-                      ['Traditional Festivals', petcount[0]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
-                      ['Traditional Festivals', petcount[1]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
-                      ['Traditional Festivals', petcount[2]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
-                      ['Traditional Festivals', petcount[3]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
-                      ['Traditional Festivals', petcount[4]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])]
+                      ['Easter', petcount[0]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Earth', petcount[1]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Mother', petcount[2]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['NewYear', petcount[3]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Valentine', petcount[4]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])]
                   ]
                }]
             });
@@ -328,7 +281,7 @@
                   plotShadow: false
                },
                title: {
-                  text: 'Cat'
+                  text: 'Non-traditional Festivals'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -348,11 +301,11 @@
                },
                series: [{
                   type: 'pie',
-                  name: 'Browser share',
+                  name: 'share',
                   data: [
-                      ['-1', petsentiment[1][0]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
-                      ['0', petsentiment[1][2]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
-                      ['+1', petsentiment[1][1]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])]
+                      ['Music', petcount[5]/(petcount[5] + petcount[6] + petcount[7])],
+                      ['Sport', petcount[6]/(petcount[5] + petcount[6] + petcount[7])],
+                      ['Film', petcount[7]/(petcount[5] + petcount[6] + petcount[7])]
                   ]
                }]
             });
@@ -362,50 +315,58 @@
          /* Line Chart button click event */
          $("#linechart").click(function(){
             
-            $('#container2').highcharts({
+            $('#container11').highcharts({
+               chart: {
+                  type: 'column'
+               },
                title: {
-                  text: 'Sentiment Scores Distributions',
-                  x: -20 //center
+                  text: 'Traditional Festivals Sentiment Scores'
                },
                xAxis: {
-                  categories: ['-5', '-4', '-3', '-2', '-1', '0',
-                      '1', '2', '3', '4', '5']
+                  categories: ['Easter', 'Earth Day', 'Mother Day', 'New Year', 'Valentine']
                },
-               yAxis: {
-                  title: {
-                      text: 'Count'
-                  },
-                  plotLines: [{
-                      value: 0,
-                      width: 1,
-                      color: '#808080'
-                  }]
-               },
-               legend: {
-                  layout: 'vertical',
-                  align: 'right',
-                  verticalAlign: 'middle',
-                  borderWidth: 0
+               credits: {
+                  enabled: false
                },
                series: [{
-                  name: 'Dog',
-                  data: petsentiment[5]
+                  name: "-1",
+                  data: [-petsentiment[0][0], -petsentiment[1][0], -petsentiment[2][0], -petsentiment[3][0], -petsentiment[4][0]]
                }, {
-                  name: 'Cat',
-                  data: petsentiment[6]
+                  name: '0',
+                  data: [petsentiment[0][2], petsentiment[1][2], petsentiment[2][2], petsentiment[3][2], petsentiment[4][2]]
                }, {
-                  name: 'Bird',
-                  data: petsentiment[7]
-               }, {
-                  name: 'Fish',
-                  data: petsentiment[8]
-               }, {
-                  name: 'Bull',
-                  data: petsentiment[9]
+                  name: "+1",
+                  data: [petsentiment[0][1], petsentiment[1][1], petsentiment[2][1], petsentiment[3][1], petsentiment[4][1]]
                }]
             });
 
+            $('#container12').highcharts({
+               chart: {
+                  type: 'column'
+               },
+               title: {
+                  text: 'Non-traditional Festivals Sentiment Scores'
+               },
+               xAxis: {
+                  categories: ['Music Festivals', 'Sport Festivals', 'Film Festivals']
+               },
+               credits: {
+                  enabled: false
+               },
+               series: [{
+                  name: "-1",
+                  data: [-petsentiment[5][0], -petsentiment[6][0], -petsentiment[7][0]]
+               }, {
+                  name: '0',
+                  data: [petsentiment[5][2], petsentiment[6][2], petsentiment[7][2]]
+               }, {
+                  name: "+1",
+                  data: [petsentiment[5][1], petsentiment[6][1], petsentiment[7][1],]
+               }]
+            });
          });
+
+
 
          
       });
