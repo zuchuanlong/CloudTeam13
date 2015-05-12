@@ -130,8 +130,8 @@
             <div id="container0" style="width: 900px; height: 500px; float: left"></div>
          </div>
          <div class="tab-pane fade" id="jmeter">
-            <div id="container00" style="width: 300px; height: 250px; float: left"></div>
-            <div id="container01" style="width: 300px; height: 250px; float: left"></div>
+            <div id="container00" style="width: 300px; height: 300px; float: left"></div>
+            <div id="container01" style="width: 300px; height: 300px; float: left"></div>
          </div>
          <div class="tab-pane fade" id="ejb">
             <div id="container2" style="width: 900px; height: 500px; float: left"></div>
@@ -312,9 +312,11 @@
                   type: 'pie',
                   name: 'Browser share',
                   data: [
-                      ['-1', petsentiment[0][0]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])],
-                      ['0', petsentiment[0][2]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])],
-                      ['+1', petsentiment[0][1]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])]
+                      ['Traditional Festivals', petcount[0]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Traditional Festivals', petcount[1]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Traditional Festivals', petcount[2]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Traditional Festivals', petcount[3]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Traditional Festivals', petcount[4]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])]
                   ]
                }]
             });
@@ -351,120 +353,6 @@
                       ['-1', petsentiment[1][0]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
                       ['0', petsentiment[1][2]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
                       ['+1', petsentiment[1][1]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container02').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Bird'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[2][0]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])],
-                      ['0', petsentiment[2][2]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])],
-                      ['+1', petsentiment[2][1]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container03').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Fish'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[3][0]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])],
-                      ['0', petsentiment[3][2]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])],
-                      ['+1', petsentiment[3][1]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container04').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Bull'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[4][0]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])],
-                      ['0', petsentiment[4][2]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])],
-                      ['+1', petsentiment[4][1]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])]
                   ]
                }]
             });
