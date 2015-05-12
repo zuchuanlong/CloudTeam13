@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>AssignmentTwo</title>
+   <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+   <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+   <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+   <script src="http://code.highcharts.com/highcharts.js"></script>
+   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+
+   <style type="text/css">
+      body {
+         background-image: url("images/catblur.jpg");
+         background-attachment: fixed;
+         background-repeat: no-repeat;
+         background-size: 100%;
+      }
+
+      .navbar {
+         background-color: rgba(0,0,0,0.6);
+         background: rgba(0,0,0,0.6);
+         border: 0;
+      }
+
+      .navbar-header span {
+         padding-left: 140px;
+         padding-right: 60px;
+         color: white;
+         font-family: myriad;
+      }
+
+      .nav .image {
+         padding-right: 25px;
+         color: white;
+      }
+
+      .nav .navcontent {
+         color: white;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      .nav .navcontent:hover {
+         color: gray;
+      }
+
+      .nav li {
+         padding-right: 40px;
+      }
+
+      .main {
+         width: 850px;
+         margin-left: 100px;
+      }
+
+      .lefttab {
+         width: auto;
+         height: auto;
+         margin-top: 150px;
+         margin-right: 100px;
+         float: left;
+         border-radius: 10px;
+         background-color: rgba(0,0,0,0.4);
+      }
+
+      #myTab {
+         width: 250px;
+         border-radius: 10px;
+      }
+
+      #myTab li {
+         padding: 0;
+      }
+
+      #myTab a {
+         text-align: center;
+         border-radius: 10px;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      #myTab a:hover {
+         background-color: rgba(0,0,0,0.2);
+      }
+
+      #myTabContent {
+         width: 500px;
+         margin-top: 60px;
+         float: right;
+      }
+
+   </style>
+
+</head>
+<body>
+
+   <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container">
+         <div class="navbar-header">
+            <a class="navbar-brand" href="home.html"><span>Phoenix</span></a>
+         </div>
+         <div>
+            <ul class="nav navbar-nav">
+               <li><a href="bootstrap03.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festivals</span></a></li>
+               <li><a href="animal.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Animals</span></a></li>
+               <li><a href="sport.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sports</span></a></li>
+               <li><a href="bootstrap05.html"><span class="image glyphicon glyphicon-cutlery"></span><span class="navcontent">Restaurants</span></a></li>
+               <li><a href="bootstrap06.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Weeks</span></a></li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div class="main">
+      <div class="lefttab">
+         <ul id="myTab" class="nav nav-pills nav-stacked">
+            <li id="heatmap" class="active"><a href="#home" data-toggle="tab"><span class="figure">Heat Map</span></a></li>
+            <li id="piechart"><a href="#ios" data-toggle="tab"><span class="figure">Pie Chart</span></a></li>
+            <li id="columnchart"><a href="#jmeter" data-toggle="tab"><span class="figure">Column Chart</span></a></li>
+            <li id="linechart"><a href="#ejb" data-toggle="tab"><span class="figure">Line Chart</span></a></li>
+         </ul>
+      </div>
+      <div id="myTabContent" class="tab-content">
+         <div class="tab-pane fade in active" id="home">
+            <div id="container" style="background-color: rgba(0,0,0,0.2); min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="ios">
+            <div id="container0" style="min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="jmeter">
+            <div id="container1" style="min-width: 800px; height: 450px; margin: 0 auto"></div>
+         </div>
+         <div class="tab-pane fade" id="ejb">
+            <div id="container2" style="width: 800px; height: 450px"></div>
+         </div>
+      </div>
+   </div>
+
+   
+
+   <script>
+      $(function () {
+
+         /* Google Heat Map */
+         var dogkey = [];
+         var dogvalue = [];
+         var heatmapdata = [];
+
+         $.ajax({
+            url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/doggeo',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+               for(var n = 0 ; n < data.rows.length ; n++){
+                  
+                  dogkey[n] = data.rows[n].key;
+                  dogvalue[n] = data.rows[n].value;
+                  heatmapdata[n] = new google.maps.LatLng(dogkey[n], dogvalue[n]);
+               }
+            }
+         });
+
+         function initialize() {
+            var mapOptions = {
+               zoom: 10,
+               center: new google.maps.LatLng(33.48, -112.073),
+               mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+
+            var map = new google.maps.Map(document.getElementById('container'),
+               mapOptions);
+
+            var pointArray = new google.maps.MVCArray(heatmapdata);
+
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+               data: pointArray
+            });
+
+            heatmap.setMap(map);
+            heatmap.set('radius', heatmap.get('radius') ? null : 40);
+         }
+
+         google.maps.event.addDomListener(window, 'load', initialize);
+
+         /* The list of animals */
+         var list = ['dog', 'cat', 'bird', 'fish', 'bull'];
+
+         /* Pie Chart */
+         var petcount = [];
+         var count = 0;
+
+         function piechart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/' + pet,
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  petcount[number] = parseInt(data.rows[0].value);
+                  count = count + petcount[number];
+               }
+            });
+         }
+
+         /* Column Chart */
+         var petsentiment = [];
+
+         function columnchart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/' + pet + '?group_level=1',
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  petsentiment[number] = [];
+                  for(var n = 0 ; n < data.rows.length ; n++){
+                     petsentiment[number][n] = parseInt(data.rows[n].value);
+                  }
+               }
+            });
+         }
+
+         /* Line Chart */
+         var petnewsemtiment = [];
+
+         function linechart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/' + pet + 'new?group_level=1',
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  petnewsemtiment[number] = [];
+                  for(var n = 0 ; n < data.rows.length ; n++){
+                     petnewsemtiment[number][n] = parseInt(data.rows[n].value);
+                  }
+               }
+            });
+         }
+
+         /* Evoke funtions to get data from couchdb */
+         for(var num = 0; num < 5; num++){
+            piechart(list[num], num);
+            columnchart(list[num], num);
+            linechart(list[num], num);
+         }
+
+         /* Pie Chart button click event */
+         $("#piechart").click(function(){
+
+            $('#container0').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Tweets Counts on Animals Pie Chart'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: [
+                      ['Dog', petcount[0]/count],
+                      ['Cat', petcount[1]/count],
+                      {
+                          name: 'Bird',
+                          y: petcount[2]/count,
+                          sliced: true,
+                          selected: true
+                      },
+                      ['Fish', petcount[3]/count],
+                      ['Bull', petcount[4]/count]
+                  ]
+               }]
+            });
+
+         });
+
+         /* Column Chart button click event */
+         $("#columnchart").click(function(){
+
+            $('#container1').highcharts({
+               chart: {
+                  type: 'column'
+               },
+               title: {
+                  text: 'Sentiment Scores on Animals Column Chart'
+               },
+               xAxis: {
+                  categories: ['Dog', 'Cat', 'Bird', 'Fish', 'Bull']
+               },
+               credits: {
+                  enabled: false
+               },
+               series: [{
+                  name: "-2",
+                  data: [-petsentiment[0][0], -petsentiment[1][0], -petsentiment[2][0], -petsentiment[3][0], -petsentiment[4][0]]
+               }, {
+                  name: "-1",
+                  data: [-petsentiment[0][1], -petsentiment[1][1], -petsentiment[2][1], -petsentiment[3][1], -petsentiment[4][1]]
+               }, {
+                  name: '0',
+                  data: [petsentiment[0][2], petsentiment[1][2], petsentiment[2][2], petsentiment[3][2], petsentiment[4][2]]
+               }, {
+                  name: '+1',
+                  data: [petsentiment[0][3], petsentiment[1][3], petsentiment[2][3], petsentiment[3][3], petsentiment[4][3]]
+               }, {
+                  name: '+2',
+                  data: [petsentiment[0][4], petsentiment[1][4], petsentiment[2][4], petsentiment[3][4], petsentiment[4][4]]
+               }]
+            });
+
+         });
+
+         /* Line Chart button click event */
+         $("#linechart").click(function(){
+            
+            $('#container2').highcharts({
+               title: {
+                  text: 'Sentiment Scores Distributions on Animals Line Chart',
+                  x: -20 //center
+               },
+               xAxis: {
+                  categories: ['-5', '-4', '-3', '-2', '-1', '0',
+                      '1', '2', '3', '4', '5']
+               },
+               yAxis: {
+                  title: {
+                      text: 'Count'
+                  },
+                  plotLines: [{
+                      value: 0,
+                      width: 1,
+                      color: '#808080'
+                  }]
+               },
+               legend: {
+                  layout: 'vertical',
+                  align: 'right',
+                  verticalAlign: 'middle',
+                  borderWidth: 0
+               },
+               series: [{
+                  name: 'Dog',
+                  data: petnewsemtiment[0]
+               }, {
+                  name: 'Cat',
+                  data: petnewsemtiment[1]
+               }, {
+                  name: 'Bird',
+                  data: petnewsemtiment[2]
+               }, {
+                  name: 'Fish',
+                  data: petnewsemtiment[3]
+               }, {
+                  name: 'Bull',
+                  data: petnewsemtiment[4]
+               }]
+            });
+
+         });
+         
+      });
+   </script>
+
+</body>
+</html>			
