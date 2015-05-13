@@ -128,14 +128,12 @@
             <div id="container" style="width: 900px; height: 500px; float: left"></div>
          </div>
          <div class="tab-pane fade" id="ios">
-            <div id="container0" style="width: 900px; height: 500px; float: left"></div>
+            <div id="container00" style="width: 900px; height: 450px; float: left"></div>
+            <img src="images/joy_with_tears.png" alt = "images/joy_with_tears.png.jpg" width=50px; height=50px>
          </div>
          <div class="tab-pane fade" id="jmeter">
-            <div id="container00" style="width: 300px; height: 250px; float: left"></div>
-            <div id="container01" style="width: 300px; height: 250px; float: left"></div>
-            <div id="container02" style="width: 300px; height: 250px; float: left"></div>
-            <div id="container03" style="width: 300px; height: 250px; float: left; margin-left: 150px;"></div>
-            <div id="container04" style="width: 300px; height: 250px; float: left"></div>
+            <div id="container01" style="width: 900px; height: 500px; float: left"></div>
+            
          </div>
          <div class="tab-pane fade" id="ejb">
             <div id="container2" style="width: 900px; height: 500px; float: left"></div>
@@ -143,97 +141,61 @@
       </div>
    </div>
 
+
    
 
    <script>
       $(function () {
 
-         /* Google Heat Map */
-         var dogkey = [];
-         var dogvalue = [];
-         var heatmapdata = [];
-
-         $.ajax({
-            url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/doggeo',
-            type: 'get',
-            dataType: 'jsonp',
-            success: function(data) {
-               for(var n = 0 ; n < data.rows.length ; n++){
-                  
-                  dogkey[n] = data.rows[n].key;
-                  dogvalue[n] = data.rows[n].value;
-                  heatmapdata[n] = new google.maps.LatLng(dogkey[n], dogvalue[n]);
-               }
-            }
-         });
-
-         function initialize() {
-            var mapOptions = {
-               zoom: 10,
-               center: new google.maps.LatLng(33.54, -112.073),
-               mapTypeId: google.maps.MapTypeId.HYBRID
-            };
-
-            var map = new google.maps.Map(document.getElementById('container'),
-               mapOptions);
-
-            var pointArray = new google.maps.MVCArray(heatmapdata);
-
-            var heatmap = new google.maps.visualization.HeatmapLayer({
-               data: pointArray,
-               maxIntensity: 60
-            });
-
-            heatmap.setMap(map);
-            heatmap.set('radius', heatmap.get('radius') ? null : 15);
-         }
-
-         google.maps.event.addDomListener(window, 'load', initialize);
-
          /* The list of animals */
-         var list = ['dog', 'cat', 'bird', 'fish', 'bull'];
+         // var list = ['happyusercount_1', 'happyusercount_2', 'happyusercount_3', 'happyusercount_4', 'happyusercount_5'];
+
+         var countlist = ["happyusercount", "sadusercount", "heartsusercount", "gestureusercount", "total_n_urb"];
+
+         var list = ['happy_friend_count_1', 'happy_friend_count_2', 'happy_friend_count_3', 'happy_friend_count_4', 'happy_friend_count_5'];
+         var sadlist = ['sad_friend_count_1', 'sad_friend_count_2', 'sad_friend_count_3', 'sad_friend_count_4', 'sad_friend_count_5'];
 
          /* Pie Chart */
          var petcount = [];
-         var count = 0;
+         var happycount = [];
+
+         var count = [];
+         var sadcount = [];
+
+         var countarray = [];
 
          function piechart (pet, number){
             $.ajax({
-               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/' + pet,
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/topic_emoji/_view/' + pet,
                type: 'get',
                dataType: 'jsonp',
                success: function(data) {
-                  petcount[number] = parseInt(data.rows[0].value);
-                  count = count + petcount[number];
+                  petcount[number] = parseInt(data.total_rows);
+                  happycount[number] = parseInt(data.rows[0].value);
                }
             });
          }
 
-         /* Multiple Pie Charts */
-         var petsentiment = [];
-
          function columnchart (pet, number){
             $.ajax({
-               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/Pets/_view/' + pet + '?group_level=1',
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/topic_emoji/_view/' + pet,
                type: 'get',
                dataType: 'jsonp',
                success: function(data) {
-                  petsentiment[number] = [];
-                  petsentiment[number + 5] = [];
-                  petsentiment[number][0] = 0;
-                  petsentiment[number][1] = 0;
-                  petsentiment[number][2] = 0;
-                  for(var n = 0 ; n < data.rows.length ; n++){
-                     petsentiment[number + 5][n] = parseInt(data.rows[n].value);
-                     if(data.rows[n].key < 0){
-                        petsentiment[number][0] = parseInt(data.rows[n].value) + petsentiment[number][0];
-                     } else if(data.rows[n].key > 0){
-                        petsentiment[number][1] = parseInt(data.rows[n].value) + petsentiment[number][1];
-                     } else {
-                        petsentiment[number][2] = parseInt(data.rows[n].value) + petsentiment[number][2];
-                     }
-                     
-                  }
+                  count[number] = parseInt(data.total_rows);
+                  sadcount[number] = parseInt(data.rows[0].value);
+               }
+            });
+         }
+
+         function linechart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/topic_emoji/_view/' + pet,
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  
+                  countarray[number] = parseInt(data.rows[0].value);
                }
             });
          }
@@ -241,61 +203,47 @@
          /* Evoke funtions to get data from couchdb */
          for(var num = 0; num < 5; num++){
             piechart(list[num], num);
-            columnchart(list[num], num);
+            columnchart(sadlist[num], num);
+            linechart(countlist[num], num);
          }
 
          /* Pie Chart button click event */
          $("#piechart0").click(function(){
 
-            $('#container0').highcharts({
+            $('#container00').highcharts({
                chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
+                  type: 'column'
                },
                title: {
-                  text: 'Animals Counts'
+                  text: 'HappyFace VS SadFace'
                },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               xAxis: {
+                  categories: ['xoxoacacia', 'lessliemancini', 'kiingjared', 'MBDTDULCE', 'ItsNyshaTho_', 'CORALraay', 'KARLYYY_WEBB', 'kiarabell_', 'stephaniehowe13', '_chellen']
                },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
+               credits: {
+                  enabled: false
                },
                series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['Dog', petcount[0]/count],
-                      ['Cat', petcount[1]/count],
-                      {
-                          name: 'Bird',
-                          y: petcount[2]/count,
-                          sliced: true,
-                          selected: true
-                      },
-                      ['Fish', petcount[3]/count],
-                      ['Bull', petcount[4]/count]
-                  ]
+                  name: "Face",
+                  data: [petcount[0], -count[0], petcount[1], -count[1], petcount[2], -count[2], petcount[3], -count[3], petcount[4], -count[4]]
+               }, {
+                  name: 'Friend',
+                  data: [happycount[0], -sadcount[0], happycount[1], -sadcount[1], happycount[2], -sadcount[2], happycount[3], -sadcount[3], happycount[4], -sadcount[4]]
+               }, {
+                  name: "Face/Friend",
+                  data: [petcount[0]/happycount[0]*100, -count[0]/sadcount[0]*100, petcount[1]/happycount[1]*100, -count[1]/sadcount[1]*100, petcount[2]/happycount[2]*100, -count[2]/sadcount[2]*100, petcount[3]/happycount[3]*100, -count[3]/sadcount[3]*100, petcount[4]/happycount[4]*100, -count[4]/sadcount[4]*100]
                }]
             });
+
+
 
          });
 
          /* Pie Chart button click event */
          $("#piechart1").click(function(){
 
-            $('#container00').highcharts({
+
+          $('#container01').highcharts({
                chart: {
                   plotBackgroundColor: null,
                   plotBorderWidth: null,
@@ -324,210 +272,21 @@
                   type: 'pie',
                   name: 'Browser share',
                   data: [
-                      ['-1', petsentiment[0][0]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])],
-                      ['0', petsentiment[0][2]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])],
-                      ['+1', petsentiment[0][1]/(petsentiment[0][0]+petsentiment[0][1]+petsentiment[0][2])]
+                      ['-1', countarray[0]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['0', countarray[1]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['+1', countarray[2]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['0', countarray[3]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['+1', countarray[4]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])]
                   ]
                }]
             });
-
-            $('#container01').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Cat'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[1][0]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
-                      ['0', petsentiment[1][2]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])],
-                      ['+1', petsentiment[1][1]/(petsentiment[1][0]+petsentiment[1][1]+petsentiment[1][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container02').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Bird'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[2][0]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])],
-                      ['0', petsentiment[2][2]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])],
-                      ['+1', petsentiment[2][1]/(petsentiment[2][0]+petsentiment[2][1]+petsentiment[2][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container03').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Fish'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[3][0]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])],
-                      ['0', petsentiment[3][2]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])],
-                      ['+1', petsentiment[3][1]/(petsentiment[3][0]+petsentiment[3][1]+petsentiment[3][2])]
-                  ]
-               }]
-            });
-
-         
-
-            $('#container04').highcharts({
-               chart: {
-                  plotBackgroundColor: null,
-                  plotBorderWidth: null,
-                  plotShadow: false
-               },
-               title: {
-                  text: 'Bull'
-               },
-               tooltip: {
-                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-               },
-               plotOptions: {
-                  pie: {
-                      allowPointSelect: true,
-                      cursor: 'pointer',
-                      dataLabels: {
-                          enabled: true,
-                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                          style: {
-                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                          }
-                      }
-                  }
-               },
-               series: [{
-                  type: 'pie',
-                  name: 'Browser share',
-                  data: [
-                      ['-1', petsentiment[4][0]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])],
-                      ['0', petsentiment[4][2]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])],
-                      ['+1', petsentiment[4][1]/(petsentiment[4][0]+petsentiment[4][1]+petsentiment[4][2])]
-                  ]
-               }]
-            });
+            
 
          });
 
          /* Line Chart button click event */
          $("#linechart").click(function(){
             
-            $('#container2').highcharts({
-               title: {
-                  text: 'Sentiment Scores Distributions',
-                  x: -20 //center
-               },
-               xAxis: {
-                  categories: ['-5', '-4', '-3', '-2', '-1', '0',
-                      '1', '2', '3', '4', '5']
-               },
-               yAxis: {
-                  title: {
-                      text: 'Count'
-                  },
-                  plotLines: [{
-                      value: 0,
-                      width: 1,
-                      color: '#808080'
-                  }]
-               },
-               legend: {
-                  layout: 'vertical',
-                  align: 'right',
-                  verticalAlign: 'middle',
-                  borderWidth: 0
-               },
-               series: [{
-                  name: 'Dog',
-                  data: petsentiment[5]
-               }, {
-                  name: 'Cat',
-                  data: petsentiment[6]
-               }, {
-                  name: 'Bird',
-                  data: petsentiment[7]
-               }, {
-                  name: 'Fish',
-                  data: petsentiment[8]
-               }, {
-                  name: 'Bull',
-                  data: petsentiment[9]
-               }]
-            });
 
          });
 
