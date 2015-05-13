@@ -155,6 +155,8 @@
          var list = ['happy_friend_count_1', 'happy_friend_count_2', 'happy_friend_count_3', 'happy_friend_count_4', 'happy_friend_count_5'];
          var sadlist = ['sad_friend_count_1', 'sad_friend_count_2', 'sad_friend_count_3', 'sad_friend_count_4', 'sad_friend_count_5'];
 
+         var facelist = ["GrinningFace","GrinningFaceWithSmilingEyes","FaceWithTearsOfJoy","SmilingFaceWithOpenMouth","SmilingFaceWithOpenMouthAndSmilingEyes","SmilingFaceWithOpenMouthAndColdSweat","SmilingFaceWithOpenMouthAndTightlyClosedEyes","SmilingFaceWithHalo","SmilingFaceWithHorns","WinkingFace","SmilingFaceWithSmilingEyes","FaceSavouringDeliciousFood","RelievedFace","SmilingFaceWithHeartShapedEyes","SmilingFaceWithSunglasses","SmirkingFace","KissingFace","FaceThrowingAKiss","KissingFaceWithSmilingEyes","KissingFaceWithClosedEyes","FaceWithStuckOutTongue","FaceWithStuckOutTongueAndWinkingEye","FaceWithStuckOutTongueAndTightlyClosedEyes","GrinningCatFaceWithSmilingEyes","CatFaceWithTearsOfJoy","SmilingCatFaceWithOpenMouth","SmilingCatFaceWithHeartShapedEyes","CatFaceWithWrySmile","KissingCatFaceWithClosedEyes","WhiteSmilingFace"];
+
          /* Pie Chart */
          var petcount = [];
          var happycount = [];
@@ -200,6 +202,22 @@
             });
          }
 
+         var happyfacecount = [];
+         var happyface = 0;
+
+         function mulpiechart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/HappyFace/_view/' + pet,
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  happyfacecount[number] = parseInt(data.rows[0].value);
+                  happyface = happyface + happyfacecount[number];
+                  
+               }
+            });
+         }
+
          /* Evoke funtions to get data from couchdb */
          for(var num = 0; num < 5; num++){
             piechart(list[num], num);
@@ -207,8 +225,14 @@
             linechart(countlist[num], num);
          }
 
+         for(var num = 0; num < 30; num++){
+            mulpiechart(facelist[num], num);
+         }
+
          /* Pie Chart button click event */
          $("#piechart0").click(function(){
+
+            faceloop();
 
             $('#container00').highcharts({
                chart: {
@@ -241,6 +265,7 @@
 
          /* Pie Chart button click event */
          $("#piechart1").click(function(){
+
 
 
           $('#container01').highcharts({
@@ -286,6 +311,71 @@
 
          /* Line Chart button click event */
          $("#linechart").click(function(){
+
+
+
+          $('#container2').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Dog'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: [
+                      [facelist[0], happyfacecount[0]/happyface],
+                      [facelist[1], happyfacecount[1]/happyface],
+                      [facelist[2], happyfacecount[2]/happyface],
+                      [facelist[3], happyfacecount[3]/happyface],
+                      [facelist[4], happyfacecount[4]/happyface],
+                      [facelist[5], happyfacecount[5]/happyface],
+                      [facelist[6], happyfacecount[6]/happyface],
+                      [facelist[7], happyfacecount[7]/happyface],
+                      [facelist[8], happyfacecount[8]/happyface],
+                      [facelist[9], happyfacecount[9]/happyface],
+                      [facelist[10], happyfacecount[10]/happyface],
+                      [facelist[11], happyfacecount[11]/happyface],
+                      [facelist[12], happyfacecount[12]/happyface],
+                      [facelist[13], happyfacecount[13]/happyface],
+                      [facelist[14], happyfacecount[14]/happyface],
+                      [facelist[15], happyfacecount[15]/happyface],
+                      [facelist[16], happyfacecount[16]/happyface],
+                      [facelist[17], happyfacecount[17]/happyface],
+                      [facelist[18], happyfacecount[18]/happyface],
+                      [facelist[19], happyfacecount[19]/happyface],
+                      [facelist[20], happyfacecount[20]/happyface],
+                      [facelist[21], happyfacecount[21]/happyface],
+                      [facelist[22], happyfacecount[22]/happyface],
+                      [facelist[23], happyfacecount[23]/happyface],
+                      [facelist[24], happyfacecount[24]/happyface],
+                      [facelist[25], happyfacecount[25]/happyface],
+                      [facelist[26], happyfacecount[26]/happyface],
+                      [facelist[27], happyfacecount[27]/happyface],
+                      [facelist[28], happyfacecount[28]/happyface],
+                      [facelist[29], happyfacecount[29]/happyface]
+                  ]
+               }]
+            });
             
 
          });
