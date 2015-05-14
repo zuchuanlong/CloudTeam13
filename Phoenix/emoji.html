@@ -104,11 +104,11 @@
             <ul class="nav navbar-nav">
                <li><a href="general.html"><span class="image glyphicon glyphicon glyphicon-th-large"></span><span class="navcontent">General</span></a></li>
                <li><a href="sport.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sport</span></a></li>
+               <li><a href="tourist.html"><span class="image glyphicon glyphicon-picture"></span><span class="navcontent">Tourist</span></a></li>
                <li><a href="animal.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Animal</span></a></li>
                <li><a href="festival.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festival</span></a></li>
                <li><a href="emoji.html"><span class="image glyphicon glyphicon-eye-open"></span><span class="navcontent">Emoji</span></a></li>
-               <li><a href="tourist.html"><span class="image glyphicon glyphicon-picture"></span><span class="navcontent">Tourist</span></a></li>
-               <li><a href="choroplexh.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Choroplexh</span></a></li>
+               <li><a href="choropleth.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Choropleth</span></a></li>
             </ul>
          </div>
       </div>
@@ -117,10 +117,10 @@
    <div class="main">
       <div class="lefttab">
          <ul id="myTab" class="nav nav-pills nav-stacked">
-            <li id="heatmap" class="active"><a href="#home" data-toggle="tab"><span class="figure">Tweets Distribution</span></a></li>
-            <li id="piechart0"><a href="#ios" data-toggle="tab"><span class="figure">Animals Counts</span></a></li>
-            <li id="piechart1"><a href="#jmeter" data-toggle="tab"><span class="figure">Sentiment Counts</span></a></li>
-            <li id="linechart"><a href="#ejb" data-toggle="tab"><span class="figure">Sentiment Distributions</span></a></li>
+            <li id="piechart1"><a href="#jmeter" data-toggle="tab"><span class="figure">Emoji Distribution</span></a></li>
+            <li id="linechart"><a href="#ejb" data-toggle="tab"><span class="figure">Rankings of Happy Faces</span></a></li>         
+            <li id="piechart0"><a href="#ios" data-toggle="tab"><span class="figure">HappyFace VS SadFace</span></a></li>
+
          </ul>
       </div>
       <div id="myTabContent" class="tab-content">
@@ -129,13 +129,25 @@
          </div>
          <div class="tab-pane fade" id="ios">
             <div id="container00" style="width: 900px; height: 500px; float: left"></div>
+            <IMG STYLE="position:absolute; TOP:160px; LEFT:720px; WIDTH:100px; HEIGHT:100px" SRC="images/happy.png">
+            <IMG STYLE="position:absolute; TOP:450px; LEFT:720px; WIDTH:100px; HEIGHT:100px" SRC="images/angry.png">
          </div>
          <div class="tab-pane fade" id="jmeter">
             <div id="container01" style="width: 900px; height: 500px; float: left"></div>
+            <IMG STYLE="position:absolute; TOP:260px; LEFT:1100px; WIDTH:100px; HEIGHT:100px" SRC="images/happy.png">
+            <IMG STYLE="position:absolute; TOP:520px; LEFT:660Px; WIDTH:75px; HEIGHT:75px" SRC="images/Crying.jpg">
+            <IMG STYLE="position:absolute; TOP:185px; LEFT:610px; WIDTH:60px; HEIGHT:60px" SRC="images/hand.png">
+            <IMG STYLE="position:absolute; TOP:360px; LEFT:620px; WIDTH:60px; HEIGHT:60px" SRC="images/heart.jpg">
+            <IMG STYLE="position:absolute; TOP:160px; LEFT:720px; WIDTH:50px; HEIGHT:50px" SRC="images/monkey.png">
             
          </div>
          <div class="tab-pane fade" id="ejb">
             <div id="container2" style="width: 900px; height: 500px; float: left"></div>
+            <IMG STYLE="position:absolute; TOP:200px; LEFT:550px; WIDTH:80px; HEIGHT:80px" SRC="images/joy_with_tears.png">
+            <IMG STYLE="position:absolute; TOP:200px; LEFT:700px; WIDTH:80px; HEIGHT:80px" SRC="images/SmilingFaceWithHeartShapedEyes.png">
+            <IMG STYLE="position:absolute; TOP:200px; LEFT:850px; WIDTH:80px; HEIGHT:80px" SRC="images/SmilingFaceWithSmilingEyes.png">
+            <IMG STYLE="position:absolute; TOP:200px; LEFT:1000px; WIDTH:80px; HEIGHT:80px" SRC="images/FaceThrowingAKiss.png">
+            <IMG STYLE="position:absolute; TOP:200px; LEFT:1150px; WIDTH:80px; HEIGHT:80px" SRC="images/SmirkingFace.png">
          </div>
       </div>
    </div>
@@ -273,7 +285,7 @@
                   plotShadow: false
                },
                title: {
-                  text: 'Dog'
+                  text: 'Emoji Distribution'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -295,11 +307,11 @@
                   type: 'pie',
                   name: 'Browser share',
                   data: [
-                      ['-1', countarray[0]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
-                      ['0', countarray[1]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
-                      ['+1', countarray[2]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
-                      ['0', countarray[3]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
-                      ['+1', countarray[4]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])]
+                      ['HappyFaces', countarray[0]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['SadFaces', countarray[1]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['Hearts', countarray[2]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['HandsGesture', countarray[3]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])],
+                      ['Others', countarray[4]/(countarray[0]+countarray[1]+countarray[2]+countarray[3]+countarray[4])]
                   ]
                }]
             });
@@ -319,7 +331,7 @@
                   plotShadow: false
                },
                title: {
-                  text: 'Dog'
+                  text: 'Rankings of Happy faces'
                },
                tooltip: {
                   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

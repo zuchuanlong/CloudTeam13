@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>AssignmentTwo</title>
+   <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+   <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
+
+   <style type="text/css">
+      body {
+         background-color: white;
+      }
+
+      .navbar {
+         background-color: rgba(0,0,0,0.6);
+         background: rgba(0,0,0,0.6);
+         border: 0;
+         margin-bottom: 0;
+      }
+
+      .navbar-header span {
+         padding-left: 30px;
+         padding-right: 50px;
+         color: white;
+         font-family: myriad;
+      }
+
+      .nav .image {
+         padding-right: 25px;
+         color: white;
+      }
+
+      .nav .navcontent {
+         color: white;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      .nav .navcontent:hover {
+         color: gray;
+      }
+
+      .nav li {
+         padding-right: 30px;
+      }
+
+      html, body{
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+      }
+      #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+      }
+      #data_display_panel{
+        position: absolute;
+        width: 260px;
+        margin-top: 15px;
+        margin-left: 15px;
+        z-index: 1000;
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+      }
+      #dataset_panel {
+        position: absolute;
+        margin-top: 250px;
+        margin-left: 15px;
+        z-index: 1000;
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+      }
+      #data_legend_outer{
+        position: absolute;
+        margin-top: 500px;
+        margin-left: 15px;
+        z-index: 1000;
+      }
+      #data_legend_panel{
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+      }
+   </style>
+
+
+<script>
+      var heatmap, map;
+
+      var docIDs = []
+      var pCodeCoordin = []
+      var suburbName = []
+      var tweetCount = []
+      var population = []
+      var avgTweets = []
+      var positive = []
+      var negative = []
+      var emoji = []
+      var festival = []
+      var pet = []
+      var sport = []
+      var tour = []
+
+      var polygonArray = []
+      var markerStringArray = []
+
+      var populationRange = [200000, 150000, 100000, 50000, 20000, 10000, 0]
+      var positiveRange = [74, 72, 70, 68, 66, 64, 50]
+      var negativeRange = [50, 36, 34, 32, 30, 28, 26]
+      var avgTweetsRange = [50, 30, 20, 10, 6, 3, 0]
+      var emojiRange = [1.3, 0.9, 0.7, 0.5, 0.3, 0.1, 0]
+      var festivalRange = [50, 30, 25, 20, 15, 10, 0]
+      var petRange = [200, 150, 100, 50, 30, 10, 0]
+      var sportRange = [500, 200, 100, 50, 30, 10, 0]
+      var tourRange = [7000, 5000, 3000, 2000, 1000, 500, 0]
+
+      $(function(){
+
+        $.ajax({
+            url: 'http://115.146.87.254:5984/suburb_boundaries/_all_docs',
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+              for(var i = 0; i < data.rows.length; i++){
+                docIDs[i] = data.rows[i].id;
+                var pCodeUrl = "http://115.146.87.254:5984/suburb_boundaries/" + docIDs[i];
+                getPcodeData(pCodeUrl);
+                tweetCount[i] = 0;
+                avgTweets[i] = 0;
+                positive[i] = 0;
+                negative[i] = 0;
+                emoji[i] = 0;
+                festival[i] = 0;
+                pet[i] = 0;
+                sport[i] = 0;
+                tour[i] =0;
+              }
+              getTwitterSentiments();
+            }
+         });
+
+        function getTwitterSentiments(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/general/_view/sentiment?group_level=2',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key[0]);
+                  if (position != -1){
+                    if (data.rows[i].key[1] == 1){
+                      positive[position] = data.rows[i].value;
+                      tweetCount[i] += data.rows[i].value;
+                    } else if (data.rows[i].key[1] == -1){
+                      negative[position] = data.rows[i].value;
+                      tweetCount[i] += data.rows[i].value;
+                    }
+                  }
+                }
+                getEmoji();
+              }
+           });
+        }
+
+        function getEmoji(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/topic_emoji/_view/total_n_urb?group_level=1',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key);
+                  if (position != -1){
+                    emoji[position] = data.rows[i].value;
+                  }
+                }
+                getFestival();
+              }
+           });
+        }
+
+        function getFestival(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/general/_view/totalFestival?group_level=1',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key);
+                  if (position != -1){
+                    festival[position] = data.rows[i].value;
+                  }
+                }
+                getPet();
+              }
+           });
+        }
+
+        function getPet(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/general/_view/totalPet?group_level=1',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key);
+                  if (position != -1){
+                    pet[position] = data.rows[i].value;
+                  }
+                }
+                getSport();
+              }
+           });
+        }
+
+        function getSport(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/general/_view/totalSports?group_level=1',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key);
+                  if (position != -1){
+                    sport[position] = data.rows[i].value;
+                  }
+                }
+                getTour();
+              }
+           });
+        }
+
+        function getTour(){
+          $.ajax({
+              url: 'http://115.146.87.254:5984/phoenix_tweets/_design/general/_view/totalTourist?group_level=1',
+              type: 'get',
+              dataType: 'jsonp',
+              success: function(data) {
+                for(var i = 0; i < data.rows.length; i++){
+                  var position = suburbName.indexOf(data.rows[i].key);
+                  if (position != -1){
+                    tour[position] = data.rows[i].value;
+                  }
+                }
+              }
+           });
+        }
+
+        function getPcodeData(pCodeUrl){
+          $.ajax({
+            url: pCodeUrl,
+            type: 'get',
+            dataType: 'jsonp',
+            success: function(data) {
+              pCodeCoordin.push(data.geometry.coordinates);
+              suburbName.push(data.properties.NAME);
+              population.push(data.properties.population);
+            }
+          });
+        }
+ 
+      });
+
+      function initialize() {
+          var styles = [
+            {
+                "featureType": "road.highway",
+                "elementType": "geometry",
+                "stylers": [
+                  { "saturation": -100 },
+                  { "lightness": -8 },
+                  { "gamma": 1.5 }
+                ]
+            }, {
+                "featureType": "road.arterial",
+                "elementType": "geometry",
+                "stylers": [
+                  { "saturation": -100 },
+                  { "gamma": 1 },
+                  { "lightness": -24 }
+                ]
+            }, {
+                "featureType": "poi",
+                "elementType": "geometry",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "administrative",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "transit",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "water",
+                "elementType": "geometry.fill",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "road",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "administrative",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }, {
+                "featureType": "landscape",
+                "stylers": [
+                  { "saturation": -100 },
+                  { "gamma": 2 }
+                ]
+            }, {
+                "featureType": "poi",
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+            }
+          ]
+          var styledMap = new google.maps.StyledMapType(styles,{name: "Styled Map"});
+          var phoenixCoord = new google.maps.LatLng(33.5240258,-112.0873713)
+          var mapOptions = {
+            zoom: 10,
+            center: phoenixCoord,
+            mapTypeControlOptions: {
+              mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style'],
+              position: google.maps.ControlPosition.RIGHT_TOP
+            },
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER
+            },
+            panControl: false
+          };
+
+          map = new google.maps.Map(document.getElementById('map-canvas'),
+              mapOptions);
+          map.mapTypes.set('map_style', styledMap);
+          map.setMapTypeId('map_style');
+
+          for (var i = 0; i < pCodeCoordin.length; i++){
+            var coordSet = CoordsParser(pCodeCoordin[i])
+            var markerString = "<b>" + suburbName[i] + "</b><br>"
+            markerString = markerString + '<table style="width:100%">'
+            markerString = markerString + "<tr><td>Population</td><td>" + population[i] + "</td></tr>"
+            markerString = markerString + "<tr><td>Positive Tweets</td><td>" + (positive[i]/(positive[i] + negative[i])*100).toFixed(2) + "%</td></tr>"
+            markerString = markerString + "<tr><td>Negative Tweets</td><td>" + (negative[i]/(positive[i] + negative[i])*100).toFixed(2) + "%</td></tr>"
+            markerString = markerString + "<tr><td>Tweets per 1000 ppl</td><td>" + (tweetCount[i]/population[i]*1000).toFixed(2) + "</td></tr>"
+            markerString = markerString + "<tr><td>Festival Tweets</td><td>" + festival[i] + "</td></tr>"
+            markerString = markerString + "<tr><td>Pets Tweets</td><td>" + pet[i] + "</td></tr>"
+            markerString = markerString + "<tr><td>Sport Tweets</td><td>" + sport[i] + "</td></tr>"
+            markerString = markerString + "<tr><td>Tourism Tweets</td><td>" + tour[i] + "</td></tr>"
+            markerString = markerString + "<tr><td>Emoji Tweets</td><td>" + (emoji[i]/tweetCount[i]).toFixed(2) + "</td></tr></table>"
+
+            var poly = new google.maps.Polygon({
+              paths: coordSet,
+              strokeColor: '#FFFFFF',
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: '#737373',
+              fillOpacity: 0.7,
+              map: map
+            });
+
+            polygonArray.push(poly);
+            markerStringArray.push(markerString);
+          }
+
+          addPolygonListeners();
+      }
+
+        function CoordsParser(Coords){
+          var listOfCoords = []
+          for (var i = 0; i < Coords.length; i++){
+            singleSet = Coords[i];
+            listOfCoords.push(new google.maps.LatLng(singleSet[0],singleSet[1]));
+          }
+          return listOfCoords;
+        }
+
+        function addPolygonListeners(){
+          for (var i = 0; i < polygonArray.length; i++){
+            var poly = polygonArray[i];
+            google.maps.event.addListener(poly, "mouseover", function(event) {
+              this.setOptions({strokeColor: "#000000"});
+              this.setOptions({strokeWeight: 4});
+              document.getElementById("data_display_panel").innerHTML = markerStringArray[polygonArray.indexOf(this)];
+            });
+            google.maps.event.addListener(poly, "mouseout", function(event) {
+              this.setOptions({strokeColor: "#FFFFFF"});
+              this.setOptions({strokeWeight: 1});
+              document.getElementById("data_display_panel").innerHTML = "<b>Postal Area information</b><br>Hover over an urban area";
+            });
+          }
+        }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+      function setColorGeneral(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:"#737373",
+                                      fillOpacity:0.7})
+        }
+        document.getElementById("data_legend_panel").innerHTML = "";
+      }
+      function setColorPopulation(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getPopulationColor(population[i]),
+                                      fillOpacity:0.7})
+        }
+        populationLegend();
+      }
+      function setColorAvgTweets(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getAvgTweetsColor(tweetCount[i]/population[i]*1000),
+                                      fillOpacity:0.7})
+        }
+        avgTweetsLegend();
+      }
+      function setColorPositive(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getPositiveColor(positive[i]/(positive[i] + negative[i])*100),
+                                      fillOpacity:0.7})
+        }
+        positiveLegend();
+      }
+      function setColorNegative(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getNegativeColor(negative[i]/(positive[i] + negative[i])*100),
+                                      fillOpacity:0.7})
+        }
+        negativeLegend();
+      }
+      function setColorEmoji(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getEmojiColor(emoji[i]/tweetCount[i]),
+                                      fillOpacity:0.7})
+        }
+        emojiLegend();
+      }
+      function setColorFestival(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getFestivalColor(festival[i]),
+                                      fillOpacity:0.7})
+        }
+        festivalLegend();
+      }
+      function setColorPet(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getPetColor(pet[i]),
+                                      fillOpacity:0.7})
+        }
+        petLegend();
+      }
+      function setColorSport(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getSportColor(sport[i]),
+                                      fillOpacity:0.7})
+        }
+        sportLegend();
+      }
+      function setColorTour(){
+        for (var i = 0; i < polygonArray.length; i++){
+          polygonArray[i].setOptions({fillColor:getTourColor(tour[i]),
+                                      fillOpacity:0.7})
+        }
+        tourLegend();
+      }
+      function getPopulationColor(d) {
+        return d > populationRange[0]  ? '#4a1486' :
+               d > populationRange[1]  ? '#6a51a3' :
+               d > populationRange[2]  ? '#807dba' :
+               d > populationRange[3]  ? '#9e9ac8' :
+               d > populationRange[4]  ? '#bcbddc' :
+               d > populationRange[5]  ? '#dadaeb' :
+                                          '#f2f0f7';
+      }
+      function getAvgTweetsColor(d) {
+        return d > avgTweetsRange[0]  ? '#084594' :
+               d > avgTweetsRange[1]  ? '#2171b5' :
+               d > avgTweetsRange[2]  ? '#4292c6' :
+               d > avgTweetsRange[3]  ? '#6baed6' :
+               d > avgTweetsRange[4]  ? '#9ecae1' :
+               d > avgTweetsRange[5]  ? '#c6dbef' :
+                                        '#eff3ff';
+      }
+      function getPositiveColor(d) {
+        return d > positiveRange[0]  ? '#7a0177' :
+               d > positiveRange[1]  ? '#ae017e' :
+               d > positiveRange[2]  ? '#dd3497' :
+               d > positiveRange[3]  ? '#f768a1' :
+               d > positiveRange[4]  ? '#fa9fb5' :
+               d > positiveRange[5]  ? '#fcc5c0' :
+                                        '#feebe2';
+      }
+      function getNegativeColor(d) {
+        return d > negativeRange[0]  ? '#8c2d04' :
+               d > negativeRange[1]  ? '#cc4c02' :
+               d > negativeRange[2]  ? '#ec7014' :
+               d > negativeRange[3]  ? '#fe9929' :
+               d > negativeRange[4]  ? '#fec44f' :
+               d > negativeRange[5]  ? '#fee391' :
+                                        '#ffffd4';
+      }
+      function getEmojiColor(d) {
+        return d > emojiRange[0]  ? '#005824' :
+               d > emojiRange[1]  ? '#238b45' :
+               d > emojiRange[2]  ? '#41ae76' :
+               d > emojiRange[3]  ? '#66c2a4' :
+               d > emojiRange[4]  ? '#99d8c9' :
+               d > emojiRange[5]  ? '#ccece6' :
+                                    '#edf8fb';
+      }
+      function getFestivalColor(d) {
+        return d > festivalRange[0]  ? '#99000d' :
+               d > festivalRange[1]  ? '#cb181d' :
+               d > festivalRange[2]  ? '#ef3b2c' :
+               d > festivalRange[3]  ? '#fb6a4a' :
+               d > festivalRange[4]  ? '#fc9272' :
+               d > festivalRange[5]  ? '#fcbba1' :
+                                        '#fee5d9';
+      }
+      function getPetColor(d) {
+        return d > petRange[0]  ? '#0c2c84' :
+               d > petRange[1]  ? '#225ea8' :
+               d > petRange[2]  ? '#1d91c0' :
+               d > petRange[3]  ? '#41b6c4' :
+               d > petRange[4]  ? '#7fcdbb' :
+               d > petRange[5]  ? '#c7e9b4' :
+                                  '#ffffcc';
+      }
+      function getSportColor(d) {
+        return d > sportRange[0]  ? '#91003f' :
+               d > sportRange[1]  ? '#ce1256' :
+               d > sportRange[2]  ? '#e7298a' :
+               d > sportRange[3]  ? '#df65b0' :
+               d > sportRange[4]  ? '#c994c7' :
+               d > sportRange[5]  ? '#d4b9da' :
+                                    '#f1eef6';
+      }
+      function getTourColor(d) {
+        return d > tourRange[0]  ? '#8c2d04' :
+               d > tourRange[1]  ? '#d94801' :
+               d > tourRange[2]  ? '#f16913' :
+               d > tourRange[3]  ? '#fd8d3c' :
+               d > tourRange[4]  ? '#fdae6b' :
+               d > tourRange[5]  ? '#fdd0a2' :
+                                    '#feedde';
+      }
+      function populationLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = populationRange.length-2; i >= -1 ; i--) {
+          var from = populationRange[i + 1];
+          var to = populationRange[i]-1;
+          content += 
+          '<i style="background:' + getPopulationColor(from + 1) + '">__</i> ' +
+          Math.round(from/1000) + (to ? 'K &ndash;' + Math.round(to/1000) + "K <br>": 'K +');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function avgTweetsLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = avgTweetsRange.length-2; i >= -1 ; i--) {
+          var from = avgTweetsRange[i + 1];
+          var to = avgTweetsRange[i]-1;
+          content +=
+          '<i style="background:' + getAvgTweetsColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function positiveLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = positiveRange.length-2; i >= -1 ; i--) {
+          var from = positiveRange[i + 1];
+          var to = positiveRange[i]-1;
+          content += 
+          '<i style="background:' + getPositiveColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function negativeLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = negativeRange.length-2; i >= -1 ; i--) {
+          var from = negativeRange[i + 1];
+          var to = negativeRange[i]-1;
+          content += 
+          '<i style="background:' + getNegativeColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function emojiLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = emojiRange.length-2; i >= -1 ; i--) {
+          var from = emojiRange[i + 1];
+          var to = (emojiRange[i]-0.01).toFixed(2);
+          content += 
+          '<i style="background:' + getEmojiColor(from + 0.1) + '">__</i> ' +
+          from + (!isNaN(to) ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function festivalLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = festivalRange.length-2; i >= -1 ; i--) {
+          var from = festivalRange[i + 1];
+          var to = festivalRange[i]-1;
+          content += 
+          '<i style="background:' + getFestivalColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function petLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = petRange.length-2; i >= -1 ; i--) {
+          var from = petRange[i + 1];
+          var to = petRange[i]-1;
+          content += 
+          '<i style="background:' + getPetColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function sportLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = sportRange.length-2; i >= -1 ; i--) {
+          var from = sportRange[i + 1];
+          var to = sportRange[i]-1;
+          content += 
+          '<i style="background:' + getSportColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+      function tourLegend() {
+        var content = '<div id="data_legend_panel">';
+        for (var i = tourRange.length-2; i >= -1 ; i--) {
+          var from = tourRange[i + 1];
+          var to = tourRange[i]-1;
+          content += 
+          '<i style="background:' + getTourColor(from + 1) + '">__</i> ' +
+          from + (to ? '&ndash;' + to + "<br>": '+');
+        }
+        document.getElementById("data_legend_outer").innerHTML = content + "</div>";
+      }
+    </script>
+
+
+
+</head>
+<body>
+
+   
+   <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container">
+         <div class="navbar-header">
+            <a class="navbar-brand" href="home.html"><span>Phoenix</span></a>
+         </div>
+         <div>
+            <ul class="nav navbar-nav">
+               <li><a href="general.html"><span class="image glyphicon glyphicon glyphicon-th-large"></span><span class="navcontent">General</span></a></li>
+               <li><a href="sport.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sport</span></a></li>
+               <li><a href="tourist.html"><span class="image glyphicon glyphicon-picture"></span><span class="navcontent">Tourist</span></a></li>
+               <li><a href="animal.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Animal</span></a></li>
+               <li><a href="festival.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festival</span></a></li>
+               <li><a href="emoji.html"><span class="image glyphicon glyphicon-eye-open"></span><span class="navcontent">Emoji</span></a></li>
+               <li><a href="choropleth.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Choropleth</span></a></li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div id="data_display_panel"><b>Postal Area information</b><br>Hover over an urban area</div>
+    <div id="dataset_panel">
+      <b>Data set selection</b><br>
+      <input type="radio" onclick="setColorGeneral()" name="choroplethType" value="0" checked> General<br>
+      <input type="radio" onclick="setColorPopulation()" name="choroplethType" value="1"> Population<br>
+      <input type="radio" onclick="setColorAvgTweets()" name="choroplethType" value="2"> Tweets per 1000 ppl<br>
+      <input type="radio" onclick="setColorPositive()" name="choroplethType" value="3"> Positive tweets %<br>
+      <input type="radio" onclick="setColorNegative()" name="choroplethType" value="4"> Negative tweets %<br>
+      <input type="radio" onclick="setColorFestival()" name="choroplethType" value="6"> Festival tweets<br>
+      <input type="radio" onclick="setColorPet()" name="choroplethType" value="7"> Pet tweets<br>
+      <input type="radio" onclick="setColorSport()" name="choroplethType" value="8"> Sport tweets<br>
+      <input type="radio" onclick="setColorTour()" name="choroplethType" value="9"> Tour tweets<br>
+      <input type="radio" onclick="setColorEmoji()" name="choroplethType" value="5"> Emoji tweets %<br>
+    </div>
+    <div id="data_legend_outer"></div>
+    <div id="map-canvas"></div>
+
+   
+
+
+
+</body>
+</html>     
