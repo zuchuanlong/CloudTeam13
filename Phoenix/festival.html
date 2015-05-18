@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>AssignmentTwo</title>
+   <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+   <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+   <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+   <script src="http://code.highcharts.com/highcharts.js"></script>
+   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+
+   <style type="text/css">
+      body {
+         background-image: url("images/buildingblur.jpg");
+         background-attachment: fixed;
+         background-repeat: no-repeat;
+         background-size: 100%;
+      }
+
+      .navbar {
+         background-color: rgba(0,0,0,0.6);
+         background: rgba(0,0,0,0.6);
+         border: 0;
+      }
+
+      .navbar-header span {
+          padding-left: 30px;
+         padding-right: 50px;
+         color: white;
+         font-family: myriad;
+      }
+
+      .nav .image {
+         padding-right: 25px;
+         color: white;
+      }
+
+      .nav .navcontent {
+         color: white;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      .nav .navcontent:hover {
+         color: gray;
+      }
+
+      .nav li {
+         padding-right: 30px;
+      }
+
+      .main {
+         width: 1250px;
+         margin-left: 100px;
+      }
+
+      .lefttab {
+         width: auto;
+         height: auto;
+         margin-top: 150px;
+         margin-right: 100px;
+         float: left;
+         border-radius: 10px;
+         background-color: rgba(0,0,0,0.4);
+      }
+
+      #myTab {
+         width: 250px;
+         border-radius: 10px;
+      }
+
+      #myTab li {
+         padding: 0;
+      }
+
+      #myTab a {
+         text-align: center;
+         border-radius: 10px;
+         font-family: myriad;
+         font-size: 15px;
+      }
+
+      #myTab a:hover {
+         background-color: rgba(0,0,0,0.2);
+      }
+
+      #myTabContent {
+         width: 900px;
+         margin-top: 60px;
+         float: right;
+      }
+
+   </style>
+
+</head>
+<body>
+
+   <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container">
+         <div class="navbar-header">
+            <a class="navbar-brand" href="home.html"><span>Phoenix</span></a>
+         </div>
+         <div>
+            <ul class="nav navbar-nav">
+               <li><a href="general.html"><span class="image glyphicon glyphicon glyphicon-th-large"></span><span class="navcontent">General</span></a></li>
+               <li><a href="sport.html"><span class="image glyphicon glyphicon-bullhorn"></span><span class="navcontent">Sport</span></a></li>
+               <li><a href="tourist.html"><span class="image glyphicon glyphicon-picture"></span><span class="navcontent">Tourist</span></a></li>
+               <li><a href="animal.html"><span class="image glyphicon glyphicon-leaf"></span><span class="navcontent">Animal</span></a></li>
+               <li><a href="festival.html"><span class="image glyphicon glyphicon-headphones"></span><span class="navcontent">Festival</span></a></li>
+               <li><a href="emoji.html"><span class="image glyphicon glyphicon-eye-open"></span><span class="navcontent">Emoji</span></a></li>
+               <li><a href="choropleth.html"><span class="image glyphicon glyphicon-globe"></span><span class="navcontent">Choropleth</span></a></li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div class="main">
+      <div class="lefttab">
+         <ul id="myTab" class="nav nav-pills nav-stacked">
+            <li id="piechart0"><a href="#ios" data-toggle="tab"><span class="figure">Festivals Counts</span></a></li>
+            <li id="piechart1"><a href="#jmeter" data-toggle="tab"><span class="figure">Festivals Distributions</span></a></li>
+            <li id="linechart"><a href="#ejb" data-toggle="tab"><span class="figure">Sentiment Distributions</span></a></li>
+         </ul>
+      </div>
+      <div id="myTabContent" class="tab-content">
+         <div class="tab-pane fade" id="ios">
+            <div id="container0" style="width: 900px; height: 500px; float: left"></div>
+         </div>
+         <div class="tab-pane fade" id="jmeter">
+            <div id="container00" style="width: 450px; height: 500px; float: left"></div>
+            <div id="container01" style="width: 450px; height: 500px; float: left"></div>
+         </div>
+         <div class="tab-pane fade" id="ejb">
+            <div id="container11" style="width: 450px; height: 500px; float: left"></div>
+            <div id="container12" style="width: 450px; height: 500px; float: left"></div>
+         </div>
+      </div>
+   </div>
+
+   
+
+   <script>
+      $(function () {
+
+         /* The list of animals */
+         var list = ['Easter', 'earthDay', 'motherDay', 'newYear', 'valentine', 'musicFest', 'sportFest', 'filmFest'];
+
+         /* Pie Chart */
+         var petcount = [];
+         var count = 0;
+
+         function piechart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/festival/_view/' + pet,
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  petcount[number] = parseInt(data.rows[0].value);
+                  count = count + petcount[number];
+               }
+            });
+         }
+
+         /* Multiple Pie Charts */
+         var petsentiment = [];
+
+         function columnchart (pet, number){
+            $.ajax({
+               url: 'http://115.146.87.254:5984/phoenix_tweets/_design/festival/_view/' + pet + '?group_level=1',
+               type: 'get',
+               dataType: 'jsonp',
+               success: function(data) {
+                  petsentiment[number] = [];
+                  petsentiment[number][0] = 0;
+                  petsentiment[number][1] = 0;
+                  petsentiment[number][2] = 0;
+                  for(var n = 0 ; n < data.rows.length ; n++){
+                     if(data.rows[n].key < 0){
+                        petsentiment[number][0] = parseInt(data.rows[n].value) + petsentiment[number][0];
+                     } else if(data.rows[n].key > 0){
+                        petsentiment[number][1] = parseInt(data.rows[n].value) + petsentiment[number][1];
+                     } else {
+                        petsentiment[number][2] = parseInt(data.rows[n].value) + petsentiment[number][2];
+                     }
+                     
+                  }
+               }
+            });
+         }
+
+         /* Evoke funtions to get data from couchdb */
+         for(var num = 0; num < 8; num++){
+            piechart(list[num], num);
+            columnchart(list[num], num);
+         }
+
+         /* Pie Chart button click event */
+         $("#piechart0").click(function(){
+
+            $('#container0').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Festivals Counts'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'share',
+                  data: [
+                      ['Traditional Festivals', (petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])/count],
+                      ['Non-traditional Festivals', (petcount[5] + petcount[6] + petcount[7])/count]
+                  ]
+               }]
+            });
+
+         });
+
+         /* Pie Chart button click event */
+         $("#piechart1").click(function(){
+
+            $('#container00').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Traditional Festivals'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'share',
+                  data: [
+                      ['Easter', petcount[0]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Earth', petcount[1]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Mother', petcount[2]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['NewYear', petcount[3]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])],
+                      ['Valentine', petcount[4]/(petcount[0] + petcount[1] + petcount[2] + petcount[3] + petcount[4])]
+                  ]
+               }]
+            });
+
+            $('#container01').highcharts({
+               chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+               },
+               title: {
+                  text: 'Non-traditional Festivals'
+               },
+               tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+               },
+               plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: true,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                          style: {
+                              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                          }
+                      }
+                  }
+               },
+               series: [{
+                  type: 'pie',
+                  name: 'share',
+                  data: [
+                      ['Music', petcount[5]/(petcount[5] + petcount[6] + petcount[7])],
+                      ['Sport', petcount[6]/(petcount[5] + petcount[6] + petcount[7])],
+                      ['Film', petcount[7]/(petcount[5] + petcount[6] + petcount[7])]
+                  ]
+               }]
+            });
+
+         });
+
+         /* Line Chart button click event */
+         $("#linechart").click(function(){
+            
+            $('#container11').highcharts({
+               chart: {
+                  type: 'column'
+               },
+               title: {
+                  text: 'Traditional Festivals Sentiment Scores'
+               },
+               xAxis: {
+                  categories: ['Easter', 'Earth Day', 'Mother Day', 'New Year', 'Valentine']
+               },
+               credits: {
+                  enabled: false
+               },
+               series: [{
+                  name: "-1",
+                  data: [-petsentiment[0][0], -petsentiment[1][0], -petsentiment[2][0], -petsentiment[3][0], -petsentiment[4][0]]
+               }, {
+                  name: '0',
+                  data: [petsentiment[0][2], petsentiment[1][2], petsentiment[2][2], petsentiment[3][2], petsentiment[4][2]]
+               }, {
+                  name: "+1",
+                  data: [petsentiment[0][1], petsentiment[1][1], petsentiment[2][1], petsentiment[3][1], petsentiment[4][1]]
+               }]
+            });
+
+            $('#container12').highcharts({
+               chart: {
+                  type: 'column'
+               },
+               title: {
+                  text: 'Non-traditional Festivals Sentiment Scores'
+               },
+               xAxis: {
+                  categories: ['Music Festivals', 'Sport Festivals', 'Film Festivals']
+               },
+               credits: {
+                  enabled: false
+               },
+               series: [{
+                  name: "-1",
+                  data: [-petsentiment[5][0], -petsentiment[6][0], -petsentiment[7][0]]
+               }, {
+                  name: '0',
+                  data: [petsentiment[5][2], petsentiment[6][2], petsentiment[7][2]]
+               }, {
+                  name: "+1",
+                  data: [petsentiment[5][1], petsentiment[6][1], petsentiment[7][1],]
+               }]
+            });
+         });
+
+
+
+         
+      });
+   </script>
+
+</body>
+</html>        
